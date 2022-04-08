@@ -1,0 +1,69 @@
+PROGRAM bank
+USING [
+    CLASS Account(VAR id)
+    FIELDS VAR id
+           VAR balance
+    INIT {
+        this.id := id
+        this.balance := 0
+    }
+    [
+        METHOD print() {
+            PRINTS "Account "
+            PRINTI this.id
+            PRINTS " with balance "
+            PRINTI this.balance
+            PRINTLNS ""
+        }
+
+        METHOD addBalance(VAR amount) {
+            IF amount < 0 THEN {
+                PRINTLNS "addBalance: amount must not be negative!"
+                ERROR
+            }
+            this.balance := this.balance + amount
+        }
+
+        METHOD subtractBalance(VAR amount) {
+            IF amount < 0 THEN {
+                PRINTLNS "subtractBalance: amount must not be negative!"
+                ERROR
+            }
+            this.balance := this.balance - amount
+        }
+    ]
+
+    CLASS Customer(VAR id, OBJ Account acc)
+    FIELDS VAR id
+           OBJ Account acc
+    INIT {
+        this.id := id
+        this.acc := acc
+    }
+    [
+        METHOD print() {
+            PRINTS "I am customer "
+            PRINTI this.id
+            PRINTLNS " and my account is: "
+            OBJ Account acc
+            acc := this.acc
+            CALL acc.print()
+        }
+    ]
+]
+DO {
+    OBJ Account a
+    a := Account(0)
+
+    OBJ Customer c
+    c := Customer(0, a)
+
+    CALL a.addBalance(100)
+    CALL c.print()
+
+    CALL a.subtractBalance(1000)
+    CALL c.print()
+
+    CALL a.subtractBalance(-1000)
+    CALL c.print()
+}

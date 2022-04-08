@@ -1,0 +1,62 @@
+name:                olang-minilanguage
+version:             0.1.0.0
+author:              "Daniel Maier"
+maintainer:          "maier.dan@campus.lmu.de"
+
+extra-source-files:
+- README.md
+
+# Metadata used when publishing your package
+# synopsis:            Short description of your package
+# category:            Web
+
+# To avoid duplicated efforts in documentation and dealing with the
+# complications of embedding Haddock markup inside cabal files, it is
+# common to point users to the README.md file.
+description:         Please see the file README.md
+
+dependencies:
+- base
+- parsec
+- hspec
+- transformers
+- containers
+- vector
+- lens
+- deepseq
+
+library:
+  source-dirs: lib
+
+executables:
+
+  olang:
+    main:                olang.hs
+    source-dirs:         app
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - olang-minilanguage
+
+  olang-debug:
+    main:                olangdebug.hs
+    source-dirs:         app
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - olang-minilanguage
+
+tests:
+  olang-test:
+    main:                Spec.hs
+    source-dirs:         test
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - olang-minilanguage

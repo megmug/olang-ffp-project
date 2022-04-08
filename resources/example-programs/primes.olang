@@ -1,0 +1,24 @@
+PROGRAM primes
+USING [
+    PROCEDURE isprime(VAR n) RETURNS VAR isprime {
+        VAR m
+        m := 2
+        isprime := 1
+        WHILE m < n DO {
+                IF (n / m) * m = n THEN isprime := 0
+                m := m + 1
+        }
+    }
+]
+DO {
+    PRINTLNS "I will now begin listing all the primes"
+    VAR n
+    n := 2
+    WHILE n > 0 DO {
+        IF isprime(n) = 1 THEN {
+            PRINTI n
+            PRINTLNS ""
+        }
+        n := n + 1
+    }
+}

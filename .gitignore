@@ -1,0 +1,17 @@
+*.pdf
+*.aux
+*.fdb_latexmk
+*.fls
+*.log
+*.nav
+*.out
+*.snm
+*.synctex.gz
+*.toc
+__latexindent_temp.*
+*.hi
+*.o
+*.html
+*.lock
+*.stack-work
+*.cabal

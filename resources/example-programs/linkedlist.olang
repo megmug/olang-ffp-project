@@ -1,0 +1,86 @@
+PROGRAM linkedlist
+USING [
+    CLASS ListInterface()
+    INIT { PRINTS "" }
+    [
+        METHOD print() {
+            PRINTLNS "I am a generic list"
+        }
+
+        METHOD insert(VAR newel) RETURNS OBJ ListInterface if {
+            PRINTLNS "I am an abstract method"
+        }
+    ]
+
+    CLASS List(VAR firstel)
+    SUBCLASSOF ListInterface
+    FIELDS VAR element
+           VAR hasnext
+           OBJ ListInterface next
+    INIT {
+        this.element := firstel
+        this.hasnext := 0
+    }
+    [
+        METHOD print() {
+            PRINTI this.element
+            IF this.hasnext = 1 THEN {
+                PRINTS " -> "
+                OBJ ListInterface mynext
+                mynext := this.next
+                CALL mynext.print()
+            }
+        }
+
+        METHOD insert(VAR newel) RETURNS OBJ List newhead {
+            IF this.hasnext = 1 THEN {
+                OBJ ListInterface next
+                next := this.next
+                this.next := next.insert(newel)
+                newhead := this
+            }
+            IF this.hasnext = 0 THEN {
+                this.hasnext := 1
+                this.next := List(newel)
+                newhead := this
+            } 
+        }
+    ]
+
+    CLASS Leaf(VAR el)
+    SUBCLASSOF ListInterface
+    FIELDS VAR element
+    INIT {
+        this.element := el
+    }
+    [
+        METHOD print() {
+            PRINTI this.element
+            PRINTLNS ""
+        }
+
+        METHOD insert(VAR newel) RETURNS OBJ List newhead {
+            newhead := List(this.element)
+            newhead := newhead.insert(newel)
+        }
+    ]
+] DO {
+    OBJ ListInterface head
+    head := Leaf(1)
+
+    CALL head.print()
+
+    PRINTLNS "Will now insert a few elements into the list"
+
+    VAR i
+    i := 2
+    WHILE i < 300 DO {
+        PRINTS "Inserting element "
+        PRINTI i
+        PRINTLNS " into the list!"
+        head := head.insert(i)
+        i := i + 1
+    }
+
+    CALL head.print()
+}

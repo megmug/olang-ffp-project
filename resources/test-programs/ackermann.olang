@@ -1,0 +1,21 @@
+PROGRAM ack
+USING [
+ PROCEDURE ack(VAR n, VAR m) RETURNS VAR a {
+   IF n < 0 THEN a := -1
+   IF m < 0 THEN a := -1
+   IF NOT n < 0 THEN
+       IF NOT m < 0 THEN {
+           IF n = 0 THEN a := m + 1
+           IF NOT n = 0 THEN {
+               IF m = 0 THEN a := ack(n - 1, 1)
+               IF NOT m = 0 THEN a := ack(n - 1, ack(n, m - 1))
+           }
+       }
+ }
+]
+DO {
+  VAR n
+  VAR m
+  READ n
+  READ m
+  PRINTI ack(n, m) }

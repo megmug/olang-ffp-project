@@ -1,0 +1,32 @@
+PROGRAM potfak
+USING [
+  PROCEDURE potenz(VAR a, VAR b) RETURNS VAR r {
+    r := 1
+    WHILE b > 0 DO {
+        r := r * a
+        b := b - 1
+    }
+  }
+
+  PROCEDURE fakultaet(VAR n) RETURNS VAR x {
+    IF n > 1 THEN x := n * fakultaet(n - 1)
+    IF n = 1 THEN x := 1
+    IF n < 1 THEN x := -1
+  }
+]
+DO {
+    VAR a
+    VAR b
+    PRINTS "Please enter a number 'a': "
+    READ a
+    PRINTS "Please enter an exponent 'b': "
+    READ b
+    PRINTS "a ^ b = "
+    PRINTI potenz(a, b)
+    PRINTLNS ""
+    VAR n
+    PRINTS "Please enter another number: "
+    READ n
+    PRINTS "The faculty of that number is: "
+    PRINTI fakultaet(n)
+}

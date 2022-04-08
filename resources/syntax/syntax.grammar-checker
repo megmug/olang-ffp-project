@@ -1,0 +1,111 @@
+/* Can be used as input for https://smlweb.cpsc.ucalgary.ca/start.html to check for some properties, including LL1 */
+/* Transformations applied from bnf form:
+ * - terminals written small alpha
+ * - non-alpha terminals replaced by descriptive alpha names
+ * - *, + and ? treated as part of nonterminal names, grammar checker doesnt support them
+ * - *, + and ? simulated by new nonterminals
+ * - -> instead of ::=
+ * - | for every alternative, . at the end of every production
+ */
+
+
+Program                     -> program name Program' do Command .
+Program'                    -> using opensquarebracket
+                               ClassDeclaration* ProcedureDeclaration*
+                               closesquarebracket
+                             | .
+ClassDeclaration*           -> ClassDeclaration ClassDeclaration*
+                             | .
+ClassDeclaration            -> class classname FormalParameterList
+                               ClassDeclaration'
+                               ClassDeclaration''
+                               init Command
+                               ClassDeclaration''' .
+ClassDeclaration'           -> subclassof classname
+                             | .
+ClassDeclaration''          -> fields FieldDeclaration FieldDeclaration*
+                             | .
+ClassDeclaration'''         -> opensquarebracket MethodDeclaration MethodDeclaration* closesquarebracket
+                             | .
+ConstDeclaration            -> const name equals number .
+VarDeclaration              -> var name .
+ObjectDeclaration           -> obj classname name .
+FormalParameterDeclaration  -> VarDeclaration
+                             | ObjectDeclaration .
+FormalParameterList         -> openroundbracket FormalParameterList' closeroundbracket .
+FormalParameterList'        -> FormalParameterDeclaration FormalParameterList''
+                             | .
+FormalParameterList''       -> comma FormalParameterDeclaration FormalParameterList''
+                             | .
+ActualParameterList         -> openroundbracket ActualParameterList' closeroundbracket .
+ActualParameterList'        -> Expression ActualParameterList''
+                             | .
+ActualParameterList''       -> comma Expression ActualParameterList''
+                             | .
+FieldDeclaration            -> FieldDeclaration' FormalParameterDeclaration .
+FieldDeclaration'           -> static
+                             | .
+FieldDeclaration*           -> FieldDeclaration FieldDeclaration*
+                             | .
+MethodDeclaration           -> method ProcedureHeader Command .
+MethodDeclaration*          -> MethodDeclaration MethodDeclaration*
+                             | .
+ProcedureDeclaration        -> procedure ProcedureHeader Command .
+ProcedureHeader             -> name FormalParameterList
+                               ProcedureHeader'
+                               ProcedureHeader'' .
+ProcedureHeader'            -> returns FormalParameterDeclaration
+                             | .
+ProcedureHeader''           -> using opensquarebracket ProcedureDeclaration ProcedureDeclaration* closesquarebracket
+                             | .
+ProcedureDeclaration*       -> ProcedureDeclaration ProcedureDeclaration*
+                             | .
+Call                        -> SymbolReference Call' .
+Call'                       -> ActualParameterList
+                             | .
+SymbolReference             -> name SymbolReference' .
+SymbolReference'            -> dot name
+                             | .
+Command                     -> SymbolReference assignment Expression
+                             | ConstDeclaration
+                             | VarDeclaration
+                             | ObjectDeclaration
+                             | call Call
+                             | read name
+                             | opencurlybracket Command Command* closecurlybracket
+                             | if Condition then Command
+                             | while Condition do Command
+                             | printi Expression
+                             | prints string
+                             | printlns string
+                             | error .
+Command*                    -> Command Command*
+                             | .
+Condition                   -> Expression Relation Expression
+                             | not Condition .
+Relation                    -> equals
+                             | smaller
+                             | greater .
+Expression                  -> Expression' Term Expression'' .
+Expression'                 -> plus
+                             | minus
+                             | .
+Expression''                -> Expression''' Term Expression''
+                             | .
+Expression'''               -> plus
+                             | minus .
+Term                        -> Factor Term' .
+Term'                       -> Term'' Factor Term'
+                             | .
+Term''                      -> times
+                             | divide .
+Factor                      -> Call
+                             | className ActualParameterList
+                             | number
+                             | openroundbracket Expression closeroundbracket .
+
+/*  Name: lowerCamelCase alpha string w/o spaces
+ *  Number: numeric string w/o spaces
+ *  String: any string, enclosed in " "
+ *  ClassName: CamelCase alpha string w/o spaces
+ */

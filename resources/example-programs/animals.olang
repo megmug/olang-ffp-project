@@ -1,0 +1,37 @@
+PROGRAM inheritance
+USING [
+    CLASS Animal(VAR id)
+    FIELDS VAR id
+    INIT {
+        this.id := id
+    }
+    [
+        METHOD print() {
+            PRINTS "I am an animal with id "
+            PRINTI this.id
+            PRINTLNS "!"
+        }
+    ]
+
+    CLASS Horse(VAR id)
+    SUBCLASSOF Animal
+    INIT {
+        this.id := id
+    }
+    [
+        METHOD print() {
+            PRINTS "I am a horse with id "
+            PRINTI this.id
+            PRINTLNS "!"
+        }
+    ]
+]
+DO {
+    OBJ Animal one
+    one := Animal(1)
+    CALL one.print()
+
+    OBJ Animal two
+    two := Horse(2)
+    CALL two.print()   
+}

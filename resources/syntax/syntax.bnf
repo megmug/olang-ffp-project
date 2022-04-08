@@ -1,0 +1,51 @@
+/* Can be used as input for "https://bottlecaps.de/rr/ui" to generate syntax graphs */
+
+Program                    ::= 'PROGRAM' Name
+                               ('USING' '[' ClassDeclaration* ProcedureDeclaration* ']')?
+                               'DO' Command
+ClassDeclaration           ::= 'CLASS' ClassName FormalParameterList
+                               ('SUBCLASSOF' ClassName)?
+                               ('FIELDS' FieldDeclaration+)?
+                               'INIT' Command
+                               ('[' MethodDeclaration+ ']')?
+ConstDeclaration           ::= 'CONST' Name '=' Number
+VarDeclaration             ::= 'VAR' Name
+ObjectDeclaration          ::= 'OBJ' ClassName Name
+FormalParameterDeclaration ::= VarDeclaration | ObjectDeclaration
+FormalParameterList        ::= '(' (FormalParameterDeclaration (',' FormalParameterDeclaration)*)? ')'
+ActualParameterList        ::= '(' (Expression (',' Expression)*)? ')'
+FieldDeclaration           ::= ('STATIC')? FormalParameterDeclaration
+MethodDeclaration          ::= 'METHOD' ProcedureHeader Command
+ProcedureDeclaration       ::= 'PROCEDURE' ProcedureHeader Command
+ProcedureHeader            ::= Name FormalParameterList
+                               ('RETURNS' FormalParameterDeclaration)?
+                               ('USING' '[' ProcedureDeclaration+ ']')?
+Call                       ::= SymbolReference ActualParameterList?
+SymbolReference            ::= Name ('.' Name)?
+Command                    ::= SymbolReference ':=' Expression
+                             | ConstDeclaration
+                             | VarDeclaration
+                             | ObjectDeclaration
+                             | 'CALL' Call
+                             | 'READ' Name
+                             | '{' Command+ '}'
+                             | 'IF' Condition 'THEN' Command
+                             | 'WHILE' Condition 'DO' Command
+                             | 'PRINTI' Expression
+                             | 'PRINTS' String
+                             | 'PRINTLNS' String
+                             | 'ERROR'
+Condition                  ::= Expression Relation Expression | 'NOT' Condition
+Relation                   ::= '=' | '<' | '>'
+Expression                 ::= ('+' | '-')? Term (('+' | '-') Term)*
+Term                       ::= Factor (( '*' | '/' ) Factor)*
+Factor                     ::= Call
+                             | ClassName ActualParameterList  /* Class Instantiation */
+                             | Number
+                             | '(' Expression ')'
+
+/*  Name: lowerCamelCase alpha string w/o spaces
+ *  Number: numeric string w/o spaces
+ *  String: any string, enclosed in " "
+ *  ClassName: CamelCase alpha string w/o spaces
+ */

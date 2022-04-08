@@ -1,0 +1,25 @@
+PROGRAM ack
+USING [
+ PROCEDURE ack(VAR n, VAR m) RETURNS VAR a {
+   IF n < 0 THEN a := -1
+   IF m < 0 THEN a := -1
+   IF NOT n < 0 THEN
+       IF NOT m < 0 THEN {
+           IF n = 0 THEN a := m + 1
+           IF NOT n = 0 THEN {
+               IF m = 0 THEN a := ack(n - 1, 1)
+               IF NOT m = 0 THEN a := ack(n - 1, ack(n, m - 1))
+           }
+       }
+ }
+]
+DO {
+  PRINTLNS "This program calculates the ackermann function a(n, m)."
+  VAR n
+  VAR m
+  PRINTS "Please enter an integer n: "
+  READ n
+  PRINTS "Please enter an integer m: "
+  READ m
+  PRINTS "Result: "
+  PRINTI ack(n, m) }

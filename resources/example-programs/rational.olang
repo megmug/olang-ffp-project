@@ -1,0 +1,182 @@
+PROGRAM rational
+USING [
+    CLASS Rational (VAR numerator, VAR denominator) 
+    FIELDS VAR numerator
+           VAR denominator
+    INIT {
+        IF denominator = 0 THEN {
+            PRINTLNS "denominator cannot be zero!"
+            ERROR
+        }
+        this.numerator := numerator
+        this.denominator := denominator
+    }
+    [
+        METHOD copy() RETURNS OBJ Rational copy {
+            copy := Rational(this.numerator, this.denominator)
+        }
+
+        METHOD getNumerator() RETURNS VAR num {
+            num := this.numerator
+        }
+
+        METHOD getDenominator() RETURNS VAR den {
+            den := this.denominator
+        }
+
+        METHOD add(OBJ Rational summand) RETURNS OBJ Rational sum {
+            VAR newnum
+            newnum := this.numerator * summand.getDenominator() + summand.getNumerator() * this.denominator
+            VAR newden
+            newden := this.denominator * summand.getDenominator()
+            sum := Rational(newnum, newden)
+        }
+
+        METHOD subtract(OBJ Rational subtrahend) RETURNS OBJ Rational difference {
+            OBJ Rational addend
+            addend := Rational(-subtrahend.getNumerator(), subtrahend.getDenominator())
+            difference := this.add(addend)
+        }
+
+        METHOD multiply(OBJ Rational factor) RETURNS OBJ Rational product {
+            VAR newnum
+            newnum := this.numerator * factor.getNumerator()
+            VAR newden
+            newden := this.denominator * factor.getDenominator()
+            product := Rational(newnum, newden)
+        }
+
+        METHOD divide(OBJ Rational divisor) RETURNS OBJ Rational quotient {
+            OBJ Rational reciprocal
+            reciprocal := Rational(divisor.getDenominator(), divisor.getNumerator())
+            quotient := this.multiply(reciprocal)
+        }
+
+        METHOD isPositive() RETURNS VAR ispositive {
+            ispositive := 1
+            IF this.numerator / this.denominator < 0 THEN ispositive := 0
+        }
+
+        METHOD isNatural() RETURNS VAR isnatural {
+            isnatural := 0
+            IF this.isPositive() = 1 THEN {
+                IF (this.numerator / this.denominator) * this.denominator = this.numerator THEN isnatural := 1
+            }
+        }
+
+        METHOD simplify() RETURNS OBJ Rational simple
+        USING [
+            PROCEDURE gcd(VAR a, VAR b) RETURNS VAR res {
+                IF b = 0 THEN res := a
+                IF NOT b = 0 THEN {
+                    IF a = 0 THEN res := b
+                    IF NOT a = 0 THEN {
+                        IF a > b THEN res := gcd(a - b, b)
+                        IF NOT a > b THEN res := gcd(b - a, b)
+                    }
+                }
+            }
+        ]
+        {
+            VAR mygcd
+            mygcd := gcd(this.numerator, this.denominator)
+            simple := Rational(this.numerator / mygcd, this.denominator / mygcd)
+        }
+
+        METHOD compare(OBJ Rational other) RETURNS VAR order {
+            order := this.numerator * other.getDenominator() - other.getNumerator() * this.denominator
+        }
+
+        METHOD sqrt() RETURNS OBJ Rational sqrt {
+            OBJ Rational zero
+            zero := Rational(0, 1)
+            OBJ Rational one
+            one := Rational(1, 1)
+            VAR order
+            order := this.compare(zero)
+            IF order < 0 THEN {
+                PRINTS "input must not be below 0!"
+                ERROR
+            }
+            order := this.compare(one)
+            IF order < 0 THEN {
+                OBJ Rational reciprocal
+                reciprocal := Rational(this.getDenominator(), this.getNumerator())
+                reciprocal := reciprocal.sqrt()
+                sqrt := Rational(reciprocal.getDenominator(), reciprocal.getNumerator())
+            }
+            IF order = 0 THEN {
+                sqrt := one
+            }
+            IF order > 0 THEN {
+                OBJ Rational two
+                two := Rational(2, 1)
+
+                sqrt := one
+
+                VAR steps
+                steps := 0
+
+                WHILE steps < 100 DO {
+                    OBJ Rational currentfrac
+                    currentfrac := this.copy()
+                    currentfrac := currentfrac.divide(sqrt)
+                    currentfrac := currentfrac.add(sqrt)
+
+                    sqrt := currentfrac.divide(two)
+
+                    steps := steps + 1
+                }
+            }
+        }
+
+        METHOD print() {
+            PRINTS "("
+            PRINTI this.numerator
+            PRINTS ", "
+            PRINTI this.denominator
+            PRINTLNS ")"
+        }
+    ]
+
+    CLASS Integer(VAR numerator, VAR denominator) SUBCLASSOF Rational
+    INIT {
+        IF denominator = 0 THEN {
+            PRINTS "denominator cannot be zero"
+            ERROR
+        }
+        IF NOT (numerator / denominator) * denominator = numerator THEN {
+            PRINTS "number is not an integer!"
+            ERROR
+        }
+        this.numerator := numerator
+        this.denominator := denominator
+    }
+    [
+        METHOD divide(OBJ Integer divisor) RETURNS OBJ Rational quotient {
+            quotient := this.multiply(Rational(divisor.getDenominator(), divisor.getNumerator()))
+        }
+
+        METHOD divide(OBJ Rational divisor) RETURNS OBJ Rational quotient {
+            quotient := this.multiply(Rational(divisor.getDenominator(), divisor.getNumerator()))
+        }
+
+        METHOD print() {
+            PRINTI this.numerator / this.denominator
+            PRINTLNS ""
+        }
+    ]
+] DO {
+    OBJ Rational test
+    test := Integer(1, 1)
+    OBJ Rational testt
+    testt := Rational(1, 2)
+    OBJ Integer testtt
+    testtt := Integer(3, 3)
+    CALL test.print()
+    CALL testt.print()
+    CALL testtt.print()
+    OBJ Rational res
+    res := testt.add(testtt)
+    CALL res.print()
+}
